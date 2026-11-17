@@ -1,5 +1,7 @@
 .DEFAULT_GOAL := help
 
+STRUCTURE_ARGS ?=
+
 .PHONY: help structure format lint test docs check
 
 help:
@@ -13,8 +15,7 @@ help:
 	  '  make check    Run all checks'
 
 structure:
-	python3 scripts/structure/check.py
-	python3 -m unittest discover -s scripts/structure -p 'test_*.py'
+	nix run github:caelurium/rust-structure/v1.0.0 -- --root . --base HEAD --config .github/rust-structure.json $(STRUCTURE_ARGS)
 
 format:
 	cargo fmt --all -- --check
