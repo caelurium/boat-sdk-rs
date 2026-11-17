@@ -14,5 +14,5 @@ initial integration is tracked in
 nix develop -c make check
 ```
 
-The checks can also be run individually with `make format`, `make lint`,
-`make test`, and `make docs`.
+The checks can also be run individually with `make structure`, `make format`,
+`make lint`, `make test`, and `make docs`.

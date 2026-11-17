@@ -26,6 +26,7 @@
               clippy
               gnumake
               pkg-config
+              python3
               rustc
               rustfmt
             ];
