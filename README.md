@@ -1,46 +1,58 @@
-# boat-sdk-rs
+# Boat Rust SDK
 
-An independent Rust client for the [Boat VM API](https://docs.boat.dev/api/v1),
-intended to make Boat sandboxes usable by Rust applications such as
-[Caelum](https://github.com/caelurium/caelum).
+An independent async Rust client for the [Boat VM API](https://docs.boat.dev/api/v1).
+Create sandboxes, run commands, manage files and snapshots, or prompt a coding agent.
 
-The async client supports authenticated JSON requests to Boat. For example,
-from a Tokio runtime:
+## Quickstart
 
-```rust
+Add the SDK and a Tokio runtime to `Cargo.toml` (Rust 1.95 or later):
+
+```toml
+[dependencies]
+boat-sdk = { git = "https://github.com/caelurium/boat-sdk-rs", tag = "v0.5.0" }
+tokio = { version = "1", features = ["macros", "rt"] }
+```
+
+Set `BOAT_API_KEY` to a [Boat API key](https://docs.boat.dev/api-keys) with
+`sandbox.read` access. This program lists the first page of sandboxes:
+
+```no_run
 use boat_sdk::Client;
+use boat_sdk::sandbox::SandboxListQuery;
 
-async fn account() -> Result<serde_json::Value, Box<dyn std::error::Error>> {
+#[tokio::main(flavor = "current_thread")]
+async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let client = Client::new(&std::env::var("BOAT_API_KEY")?)?;
-    Ok(client.get_json(&["me"], &()).await?)
+    let page = client.list_sandboxes(&SandboxListQuery::default()).await?;
+    for sandbox in page.sandboxes {
+        println!("{}: {}", sandbox.id, sandbox.state);
+    }
+    Ok(())
 }
 ```
 
-Use `Config` and `Client::from_config` to override the API root or select an
-organization. Caelum's initial integration is tracked in
-[issue #214](https://github.com/caelurium/caelum/issues/214).
+Reuse the client across calls. `Client::new` sends the key as a bearer token to
+the hosted API. Use `Config::with_organization` to select an organization for
+this client, or `Config::with_base_url` to point it at another trusted API root.
 
-## Development
+## Runnable examples
 
-```sh
-nix develop -c make check
-```
+From a checkout, with `BOAT_API_KEY` set:
 
-The checks can also be run individually with `make structure`, `make format`,
-`make lint`, `make test`, and `make docs`.
+| Command | What it does |
+| --- | --- |
+| `cargo run --example sandbox` | Creates a sandbox with a five-minute auto-stop, runs `pwd`, then requests a stop. Requires a key that can create, execute in, and stop sandboxes. |
+| `cargo run --example prompt -- <sandbox-id>` | Queues a prompt in a new conversation on an existing sandbox and reports its final status. Connect an agent credential in Boat first; the example uses your configured harness and model. |
 
-## Releases
+## API coverage and errors
 
-Use Conventional Commits and leave the version files alone. After checks pass
-on `main`, release-please opens or updates a release PR with the next version
-in `Cargo.toml` and `Cargo.lock` and a changelog. A `fix:` bumps the patch;
-a `feat:` bumps the minor. Breaking changes bump the minor before 1.0 and
-the major thereafter.
+Typed methods cover sandbox lifecycle, commands, files, snapshots, access,
+integrated agents, accounts, environments, and AI credentials. For JSON GET or
+POST endpoints without a typed method (such as listing webhooks), use
+`Client::get_json` or `Client::post_json` with your own response type. Agent
+events use cursor-based polling; use a prompt's run status to tell when it ends.
 
-Merge the release PR to publish. Once the merged commit passes CI, the release
-workflow creates its annotated `v<version>` tag and GitHub Release.
-
-**Maintainer setup:** Set the Actions secret `RELEASE_PLEASE_TOKEN` to a
-repository-scoped bot token with contents, pull requests, and issues write
-permissions. Using a separate token allows release PRs to trigger the
-required CI checks on the protected `main` branch.
+Calls return `Result<T, boat_sdk::Error>`. On `Error::Api`, inspect `status`,
+`code`, and `request_id`. `Error::Transport` means the exchange failed; a
+mutation may already have taken effect. For a create or fork that you intend
+to retry, supply the same idempotency key and request body on each attempt.
