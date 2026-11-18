@@ -69,3 +69,47 @@ jobs:
           toolchain: "1.95.0"
       - uses: Swatinem/rust-cache@v2
       - run: RUSTDOCFLAGS="-D warnings" cargo doc --locked --workspace --no-deps
+
+  release:
+    name: Publish version bump
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    needs: [rust-structure, rust-format, rust-lint, rust-tests, rust-docs]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+      - name: Tag and publish the tested commit
+        env:
+          BEFORE: ${{ github.event.before }}
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          version() { python3 -c 'import sys, tomllib; print(tomllib.load(sys.stdin.buffer)["package"]["version"])'; }
+          previous=$(git show "${BEFORE}:Cargo.toml" | version)
+          current=$(version < Cargo.toml)
+          if [[ "$current" == "$previous" ]]; then
+            echo "Version unchanged ($current); skipping release."
+            exit 0
+          fi
+
+          tag="v$current"
+          if git show-ref --verify --quiet "refs/tags/$tag"; then
+            if [[ "$(git rev-list -n 1 "refs/tags/$tag")" != "$GITHUB_SHA" ]]; then
+              echo "::error::Tag $tag already points to another commit."
+              exit 1
+            fi
+          else
+            git -c user.name='github-actions[bot]' \
+                -c user.email='41898282+github-actions[bot]@users.noreply.github.com' \
+                tag -a "$tag" "$GITHUB_SHA" -m "Boat Rust SDK $tag"
+            git push origin "refs/tags/$tag"
+          fi
+
+          if ! gh release view "$tag" >/dev/null 2>&1; then
+            flags=()
+            if [[ "${current%%+*}" == *-* ]]; then flags+=(--prerelease); fi
+            gh release create "$tag" --verify-tag --title "Boat Rust SDK $tag" --generate-notes "${flags[@]}"
+          fi

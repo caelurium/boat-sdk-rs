@@ -28,3 +28,11 @@ nix develop -c make check
 
 The checks can also be run individually with `make structure`, `make format`,
 `make lint`, `make test`, and `make docs`.
+
+## Releases
+
+To release, bump `package.version` in `Cargo.toml`, update `Cargo.lock`, and
+merge the change into `main`. After all CI checks pass, GitHub Actions creates
+an annotated `v<version>` tag on the tested commit and publishes a GitHub
+Release with generated notes. Versions such as `0.2.0-rc.1` are marked as
+prereleases. Merges without a version bump do not publish a release.
