@@ -20,11 +20,10 @@ jobs:
       - uses: actions/checkout@v7
         with:
           fetch-depth: 0
-      - name: Check Rust structure limits
-        env:
-          BASE_REVISION: ${{ github.event.pull_request.base.sha || 'HEAD^' }}
-        run: python3 scripts/structure/check.py --base "$BASE_REVISION"
-      - run: python3 -m unittest discover -s scripts/structure -p 'test_*.py'
+      - uses: caelurium/rust-structure@v1
+        with:
+          base-ref: ${{ github.event.pull_request.base.sha || 'HEAD^' }}
+          config: .github/rust-structure.json
 
   rust-format:
     name: rust-format

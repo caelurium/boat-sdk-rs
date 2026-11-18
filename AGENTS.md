@@ -10,7 +10,8 @@ interfaces belong in the consuming application, not in this SDK.
 - Aim for **800 non-test lines per Rust file**; **1,500 is the hard cap**.
 - Keep test files and inline test modules under **1,000 lines**.
 - Split capability families into directories; a folder over 40 Rust source files
-  warns and over 60 fails. See `scripts/structure/check.py` for the full rules.
+  warns and over 60 fails. See `.github/rust-structure.json` and the shared
+  [checker](https://github.com/caelurium/rust-structure) for the full rules.
 - Keep module declarations and re-exports sorted, one item per line.
 - Keep visibility narrow and document the public API.
 
@@ -29,7 +30,7 @@ interfaces belong in the consuming application, not in this SDK.
 ## Commands and verification
 
 - `nix develop -c make check`: formatting, Clippy, tests, and documentation.
-- `make structure`: Rust source/test size and module-folder guardrails.
+- `make structure`: shared Rust source/test size and module-folder guardrails.
 - `make format`: `cargo fmt --all -- --check`.
 - `make lint`: Clippy with warnings denied.
 - `make test`: workspace tests.
