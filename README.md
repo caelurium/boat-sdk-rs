@@ -31,8 +31,16 @@ The checks can also be run individually with `make structure`, `make format`,
 
 ## Releases
 
-To release, bump `package.version` in `Cargo.toml`, update `Cargo.lock`, and
-merge the change into `main`. After all CI checks pass, GitHub Actions creates
-an annotated `v<version>` tag on the tested commit and publishes a GitHub
-Release with generated notes. Versions such as `0.2.0-rc.1` are marked as
-prereleases. Merges without a version bump do not publish a release.
+Use Conventional Commits and leave the version files alone. After checks pass
+on `main`, release-please opens or updates a release PR with the next version
+in `Cargo.toml` and `Cargo.lock` and a changelog. A `fix:` bumps the patch;
+a `feat:` bumps the minor. Breaking changes bump the minor before 1.0 and
+the major thereafter.
+
+Merge the release PR to publish. Once the merged commit passes CI, the release
+workflow creates its annotated `v<version>` tag and GitHub Release.
+
+**Maintainer setup:** Set the Actions secret `RELEASE_PLEASE_TOKEN` to a
+repository-scoped bot token with contents, pull requests, and issues write
+permissions. Using a separate token allows release PRs to trigger the
+required CI checks on the protected `main` branch.
