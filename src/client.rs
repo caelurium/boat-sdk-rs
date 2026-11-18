@@ -44,6 +44,14 @@ impl Client {
         Ok(url)
     }
 
+    pub(crate) fn request(
+        &self,
+        method: reqwest::Method,
+        path: &[&str],
+    ) -> Result<RequestBuilder, Error> {
+        Ok(self.http.request(method, self.endpoint(path)?))
+    }
+
     /// GET a JSON endpoint with path segments relative to the API root and
     /// URL-encoded query parameters. Pass `&()` for an empty query.
     /// Buffered JSON responses are limited to 16 MiB.
@@ -64,7 +72,7 @@ impl Client {
         Self::send(self.http.post(self.endpoint(path)?).json(body)).await
     }
 
-    async fn send<T: DeserializeOwned>(request: RequestBuilder) -> Result<T, Error> {
+    pub(crate) async fn send<T: DeserializeOwned>(request: RequestBuilder) -> Result<T, Error> {
         let response = request.send().await.map_err(|e| {
             if e.is_builder() {
                 Error::Request
