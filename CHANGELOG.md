@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.5.0](https://github.com/caelurium/boat-sdk-rs/compare/v0.4.0...v0.5.0) (2026-11-18)
+
+
+### Features
+
+* **account:** add account, environment, and credential management ([b5201de](https://github.com/caelurium/boat-sdk-rs/commit/b5201de28be897cf48b1e14f41f38b48dad9892c))
+* **account:** add account, environment, and credential management ([7d538cf](https://github.com/caelurium/boat-sdk-rs/commit/7d538cfb055247eb7c9c5598b6556bd8c6dbd0b6))
+
 ## [0.4.0](https://github.com/caelurium/boat-sdk-rs/compare/v0.3.0...v0.4.0) (2026-11-18)
 
 
