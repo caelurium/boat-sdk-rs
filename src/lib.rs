@@ -5,11 +5,14 @@
 
 #![forbid(unsafe_code)]
 
+pub mod access;
 mod client;
 pub mod commands;
 mod config;
 mod error;
+pub mod files;
 pub mod sandbox;
+pub mod snapshots;
 
 pub use client::Client;
 pub use config::Config;
