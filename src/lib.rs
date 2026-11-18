@@ -8,6 +8,7 @@
 mod client;
 mod config;
 mod error;
+pub mod sandbox;
 
 pub use client::Client;
 pub use config::Config;
