@@ -1,0 +1,130 @@
+{
+  "source": "https://docs.boat.dev/openapi/boat-v1.yaml",
+  "sha256": "1186b2802f6f086cc9f0da0c8eee3b7897b0e931471d347516b9c6259c5d0a06",
+  "operations": {
+    "create": {
+      "method": "POST",
+      "path": "/sandboxes",
+      "status": 202,
+      "response": {
+        "ok": true,
+        "type": "sandbox.created",
+        "status": "provisioning",
+        "ttlSeconds": 3600,
+        "sandbox": {
+          "id": "bx_23456789",
+          "name": "Sandbox 2026-05-31 12:00",
+          "state": "provisioning",
+          "url": null,
+          "ip": null,
+          "createdAt": "2026-05-31T12:00:00Z",
+          "updatedAt": "2026-05-31T12:00:00Z",
+          "archiveAfter": "2026-05-31T13:00:00Z",
+          "desktopAvailable": false,
+          "desktopUrl": null,
+          "snapshotAvailable": false,
+          "snapshotCompletedAt": null
+        }
+      },
+      "request": {
+        "ttlSeconds": 3600
+      }
+    },
+    "stop": {
+      "method": "POST",
+      "path": "/sandboxes/{sandboxId}/stop",
+      "status": 202,
+      "response": {
+        "ok": true,
+        "type": "sandbox.stopping",
+        "id": "bx_23456789",
+        "status": "archiving",
+        "sandbox": {
+          "id": "bx_23456789",
+          "name": "Sandbox 2026-05-31 12:00",
+          "state": "archiving",
+          "desktopAvailable": true,
+          "snapshotAvailable": false
+        }
+      }
+    },
+    "prompt": {
+      "method": "POST",
+      "path": "/sandboxes/{sandboxId}/prompt",
+      "status": 202,
+      "response": {
+        "ok": true,
+        "type": "prompt.queued",
+        "id": "bx_23456789",
+        "promptId": "prompt_123",
+        "conversationId": "8f1c2b7a-3d4e-4f5a-9b0c-1d2e3f4a5b6c",
+        "promptRun": {
+          "id": "prompt_123",
+          "promptId": "prompt_123",
+          "sandboxId": "bx_23456789",
+          "status": "queued",
+          "done": false,
+          "conversationId": "8f1c2b7a-3d4e-4f5a-9b0c-1d2e3f4a5b6c"
+        },
+        "status": "queued",
+        "provider": "codex",
+        "model": "gpt-5.4",
+        "reasoningEffort": "medium",
+        "fast": false
+      },
+      "request": {
+        "provider": "codex",
+        "model": "gpt-5.4",
+        "reasoningEffort": "medium",
+        "prompt": "Work on the selected repo, run tests, fix failures, commit the result, and report any hosted preview URL."
+      }
+    },
+    "getSnapshotTree": {
+      "method": "GET",
+      "path": "/snapshots/{snapshotId}/tree",
+      "status": 200,
+      "response": {
+        "ok": true,
+        "type": "snapshot.tree",
+        "snapshotId": "7417be09-d419-4ae0-b3fc-7f04a5a71ef1",
+        "sandboxId": "bx_23456789",
+        "generation": 0,
+        "treeAvailable": false,
+        "truncated": false,
+        "fileCount": 0,
+        "totalSizeBytes": 0,
+        "entries": [],
+        "reason": "legacy_snapshot"
+      }
+    },
+    "listOrganizations": {
+      "method": "GET",
+      "path": "/orgs",
+      "status": 200,
+      "response": {
+        "ok": true,
+        "type": "org.list",
+        "activeWalletChosen": true,
+        "orgs": [
+          {
+            "id": "4f1c2e0a-7b3d-4a6e-9c8b-2d5e1f0a3b7c",
+            "name": "Personal",
+            "type": "personal",
+            "role": "owner",
+            "memberCount": 1,
+            "active": false
+          },
+          {
+            "id": "team_583fd89e-6d29-4007-b48d-52477656cb0f",
+            "name": "acme",
+            "type": "org",
+            "role": "owner",
+            "memberCount": 3,
+            "subscriptionStatus": "active",
+            "active": true
+          }
+        ]
+      }
+    }
+  }
+}

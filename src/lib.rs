@@ -1,8 +1,4 @@
-//! An independent Rust SDK for the Boat VM API.
-//!
-//! Use [`Client::new`] for the hosted API, or [`Config`] to select a base URL
-//! and organization. Credentials are supplied by the caller.
-
+#![doc = include_str!("../README.md")]
 #![forbid(unsafe_code)]
 
 pub mod access;
