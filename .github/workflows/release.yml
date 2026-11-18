@@ -12,7 +12,7 @@ jobs:
     uses: ./.github/workflows/ci.yml
 
   release:
-    name: Publish version bump
+    name: Prepare or publish release
     needs: checks
     runs-on: ubuntu-latest
     permissions:
@@ -21,10 +21,9 @@ jobs:
       - uses: actions/checkout@v7
         with:
           fetch-depth: 0
-      - name: Tag and publish the tested commit
+      - name: Annotate the tested version bump
         env:
           BEFORE: ${{ github.event.before }}
-          GH_TOKEN: ${{ github.token }}
         run: |
           set -euo pipefail
           version() { python3 -c 'import sys, tomllib; print(tomllib.load(sys.stdin.buffer)["package"]["version"])'; }
@@ -48,8 +47,9 @@ jobs:
             git push origin "refs/tags/$tag"
           fi
 
-          if ! gh release view "$tag" >/dev/null 2>&1; then
-            flags=()
-            if [[ "${current%%+*}" == *-* ]]; then flags+=(--prerelease); fi
-            gh release create "$tag" --verify-tag --title "Boat Rust SDK $tag" --generate-notes "${flags[@]}"
-          fi
+      - name: Update release PR or publish a merged release
+        uses: googleapis/release-please-action@5c625bfb5d1ff62eadeeb3772007f7f66fdcf071 # v4
+        with:
+          token: ${{ secrets.RELEASE_PLEASE_TOKEN }}
+          config-file: release-please-config.json
+          manifest-file: .release-please-manifest.json

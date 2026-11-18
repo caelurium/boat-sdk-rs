@@ -1,0 +1,13 @@
+{
+  "$schema": "https://raw.githubusercontent.com/googleapis/release-please/main/schemas/config.json",
+  "bootstrap-sha": "cde61770a1dfaf2df2df223d3bcfec35ffd38251",
+  "packages": {
+    ".": {
+      "release-type": "rust",
+      "include-component-in-tag": false,
+      "bump-minor-pre-major": true,
+      "bump-patch-for-minor-pre-major": false,
+      "pull-request-header": "## Description\n\nRelease the next version of the Boat Rust SDK.\n\n## Changes in this pull request"
+    }
+  }
+}
