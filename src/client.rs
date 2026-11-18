@@ -74,11 +74,22 @@ impl Client {
     }
 
     pub(crate) async fn send<T: DeserializeOwned>(request: RequestBuilder) -> Result<T, Error> {
-        let body = read_body(Self::send_response(request).await?, 16 * 1024 * 1024).await?;
+        Self::decode(Self::send_response(request).await?).await
+    }
+
+    pub(crate) async fn decode<T: DeserializeOwned>(response: Response) -> Result<T, Error> {
+        let body = read_body(response, 16 * 1024 * 1024).await?;
         serde_json::from_slice(&body).map_err(|_| Error::Decode)
     }
 
     pub(crate) async fn send_response(request: RequestBuilder) -> Result<Response, Error> {
+        Self::checked_response(request, false).await
+    }
+
+    pub(crate) async fn checked_response(
+        request: RequestBuilder,
+        allow_not_modified: bool,
+    ) -> Result<Response, Error> {
         let response = request.send().await.map_err(|e| {
             if e.is_builder() {
                 Error::Request
@@ -87,6 +98,9 @@ impl Client {
             }
         })?;
         let status = response.status();
+        if allow_not_modified && status == reqwest::StatusCode::NOT_MODIFIED {
+            return Ok(response);
+        }
         if !status.is_success() {
             let header_id = response
                 .headers()
