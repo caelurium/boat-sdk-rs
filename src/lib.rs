@@ -6,6 +6,7 @@
 #![forbid(unsafe_code)]
 
 mod client;
+pub mod commands;
 mod config;
 mod error;
 pub mod sandbox;

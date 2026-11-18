@@ -23,6 +23,7 @@ impl Client {
         let http = reqwest::Client::builder()
             .default_headers(config.headers)
             .redirect(reqwest::redirect::Policy::none())
+            .retry(reqwest::retry::never())
             .connect_timeout(Duration::from_secs(30))
             .build()
             .map_err(|_| Error::Configuration)?;
@@ -73,6 +74,11 @@ impl Client {
     }
 
     pub(crate) async fn send<T: DeserializeOwned>(request: RequestBuilder) -> Result<T, Error> {
+        let body = read_body(Self::send_response(request).await?, 16 * 1024 * 1024).await?;
+        serde_json::from_slice(&body).map_err(|_| Error::Decode)
+    }
+
+    pub(crate) async fn send_response(request: RequestBuilder) -> Result<Response, Error> {
         let response = request.send().await.map_err(|e| {
             if e.is_builder() {
                 Error::Request
@@ -99,8 +105,7 @@ impl Client {
                 request_id: envelope.request_id.or(header_id),
             });
         }
-        let body = read_body(response, 16 * 1024 * 1024).await?;
-        serde_json::from_slice(&body).map_err(|_| Error::Decode)
+        Ok(response)
     }
 }
 
