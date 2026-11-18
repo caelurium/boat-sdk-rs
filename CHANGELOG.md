@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.3.0](https://github.com/caelurium/boat-sdk-rs/compare/v0.2.0...v0.3.0) (2026-11-18)
+
+
+### Features
+
+* **sandbox:** add files, snapshots, and access APIs ([f4ae601](https://github.com/caelurium/boat-sdk-rs/commit/f4ae60134c45fcbb4462a4d206c9edd0963ef98f))
+
 ## [0.2.0](https://github.com/caelurium/boat-sdk-rs/compare/v0.1.0...v0.2.0) (2026-11-18)
 
 
