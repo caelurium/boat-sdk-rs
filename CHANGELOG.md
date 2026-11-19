@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.6.0](https://github.com/caelurium/boat-sdk-rs/compare/v0.5.0...v0.6.0) (2026-11-19)
+
+
+### Features
+
+* **agents:** fetch the public provider model catalogue ([bd325af](https://github.com/caelurium/boat-sdk-rs/commit/bd325afd914fa34c91a5b977f040d4c978cc7807))
+* **agents:** fetch the public provider model catalogue ([9a53581](https://github.com/caelurium/boat-sdk-rs/commit/9a5358197ecca318b6e64cff8aed057bf3a540c4))
+
 ## [0.5.0](https://github.com/caelurium/boat-sdk-rs/compare/v0.4.0...v0.5.0) (2026-11-18)
 
 
