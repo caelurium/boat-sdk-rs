@@ -5,6 +5,13 @@ use std::time::Duration;
 
 use crate::{Config, Error};
 
+pub(crate) fn transport() -> reqwest::ClientBuilder {
+    reqwest::Client::builder()
+        .redirect(reqwest::redirect::Policy::none())
+        .retry(reqwest::retry::never())
+        .connect_timeout(Duration::from_secs(30))
+}
+
 /// Reusable asynchronous Boat API client. Clones share the connection pool.
 #[derive(Clone)]
 pub struct Client {
@@ -20,11 +27,8 @@ impl Client {
 
     /// Build a client for the configured root and organization.
     pub fn from_config(config: Config) -> Result<Self, Error> {
-        let http = reqwest::Client::builder()
+        let http = transport()
             .default_headers(config.headers)
-            .redirect(reqwest::redirect::Policy::none())
-            .retry(reqwest::retry::never())
-            .connect_timeout(Duration::from_secs(30))
             .build()
             .map_err(|_| Error::Configuration)?;
         Ok(Self {
