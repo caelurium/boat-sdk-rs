@@ -2,9 +2,15 @@
 //! events, and check `promptRun.done` for completion. Sandbox state is independent
 //! of individual turns, which can run concurrently.
 
+mod catalogue;
 mod events;
 pub mod models;
 
+pub use catalogue::provider_models;
+pub use catalogue::HarnessModels;
+pub use catalogue::ProviderCatalogue;
+pub use catalogue::ProviderModel;
+pub use catalogue::ReasoningEffort;
 pub use events::EventOrder;
 pub use events::EventQuery;
 pub use events::EventStream;
@@ -26,7 +32,7 @@ pub struct PromptRequest {
     /// Harness name, e.g. `codex`, `claude`, or `opencode`.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub provider: Option<String>,
-    /// Boat model ID for the selected harness.
+    /// Boat model ID for the selected harness: [`ProviderModel::id`], not its SDK ID.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub model: Option<String>,
     /// Optional model-specific reasoning level.
